@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
-import 'package:http/http.dart';
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import '../Classes/APIcall.dart';
 import '../Classes/PlaceHolderAPi.dart';
+import 'DetailedNews.dart';
 
 class WelcomePage extends StatefulWidget {
   @override
@@ -27,6 +24,10 @@ class _WelcomePageState extends State<WelcomePage> {
         )
       ],
       child: Scaffold(
+        appBar: AppBar(
+          title: Text("Top Headlines"),
+          centerTitle: true,
+        ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -34,35 +35,45 @@ class _WelcomePageState extends State<WelcomePage> {
               child: Consumer<apicall>(
                 builder: (context, apicall, child) {
                   apicall.getData();
-                  if (apicall.imageurl == "Hello")
-                    return Text(
-                      apicall.imageurl,
-                      style: TextStyle(fontSize: 45),
+                  apicall.article.forEach((news) {
+                    print(news.title);
+                  });
+                  if (apicall.article != null) {
+                    return Expanded(
+                      child: ListView.builder(
+                          itemCount: apicall.article.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              child: ListTile(
+                                leading: Icon(Icons.arrow_forward_ios),
+                                title: Text(
+                                  apicall.article[index].title,
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                                trailing: InkWell(
+                                  child: Icon(Icons.launch),
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/detailed',
+                                        arguments: {
+                                          'title': apicall.article[index].title,
+                                          'url': apicall.article[index].url,
+                                          'urlImage':
+                                              apicall.article[index].urlImage,
+                                          'content':
+                                              apicall.article[index].content
+                                        });
+                                  },
+                                ),
+                              ),
+                            );
+                          }),
                     );
-                  else
-                    return Image(
-                      image: NetworkImage(apicall.imageurl),
-                    );
+                  }
+                  return Text("Please wait");
                 },
               ),
             ),
-            Container(
-              child: Consumer<jsonPlaceHoder>(
-                builder: (context, jsonPlaceHolder, child) {
-                  jsonPlaceHolder.getDataJson();
-                  if (jsonPlaceHolder.datafromjson["title"] != null)
-                    return Text(
-                      jsonPlaceHolder.datafromjson["title"],
-                      style: TextStyle(fontSize: 45),
-                    );
-                  else
-                    return Container(
-                      height: 100,
-                      color: Colors.red,
-                    );
-                },
-              ),
-            )
+//
           ],
         ),
       ),

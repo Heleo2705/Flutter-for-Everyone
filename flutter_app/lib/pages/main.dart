@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'DetailedNews.dart';
 import 'WelcomePage.dart';
 
 void main() {
   runApp(MaterialApp(
     routes: {
       '/': (context) => MainPage(),
-      '/welcome': (context) => WelcomePage()
+      '/welcome': (context) => WelcomePage(),
+      '/detailed': (context)=>DetailedNews(),
     },
   ));
 }
